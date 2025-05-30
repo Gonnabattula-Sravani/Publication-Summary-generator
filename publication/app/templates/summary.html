@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Summary Report - Research Track</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #717b87;
+            background-size: cover;
+        }
+        header {
+            text-align: center;
+            padding: 20px;
+            color: white;
+            font-size: 36px;
+            font-weight: bold;
+        }
+        .container {
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            max-width: 900px;
+            margin: 20px auto;
+        }
+        .section-header {
+            font-size: 22px;
+            font-weight: bold;
+            color: #333;
+            margin-top: 20px;
+        }
+        .section-content {
+            font-size: 18px;
+            margin-bottom: 15px;
+            line-height: 1.6;
+        }
+        .list-item {
+            margin-bottom: 10px;
+        }
+        .section-content ul {
+            list-style-type: none;
+            padding-left: 0;
+        }
+        .list-item::before {
+            content: "• ";
+            color: #007BFF;
+            font-size: 20px;
+        }
+    </style>
+</head>
+<body>
+    <header>Research Track Summary Report</header>
+    <div class="container">
+        <div class="section-header">Summary Report</div>
+
+        <!-- Total Publications -->
+        <div class="section-content">
+            <strong>Total Publications:</strong> {{ summary.total_publications }}
+        </div>
+
+        <!-- Total Journals and Conferences -->
+        <div class="section-content">
+            <strong>Total Journals:</strong> {{ summary.total_journals }}<br>
+            <strong>Total Conferences:</strong> {{ summary.total_conferences }}
+        </div>
+
+        <!-- Most Active Year -->
+        <div class="section-content">
+            <strong>Most Active Year:</strong> {{ summary.most_active_year }}
+        </div>
+
+        <!-- Most Published In -->
+        <div class="section-content">
+            <strong>Most Published In:</strong> {{ summary.most_published_in }}
+        </div>
+
+        <!-- Top Cited Publications -->
+        <div class="section-header">Top Cited Publications:</div>
+        <div class="section-content">
+            <ul>
+                {% for pub in summary.top_cited %}
+                    <li class="list-item">{{ pub.title }} ({{ pub.year }}) - Citations: {{ pub.citation_count }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <!-- Publication Trend -->
+        <div class="section-header">Publication Trend:</div>
+        <div class="section-content">
+            <ul>
+                {% for year, count in summary.publication_trend.items() %}
+                    <li class="list-item">{{ year }}: {{ count }} publications</li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <!-- Most Focused Areas -->
+        <div class="section-header">Most Focused Areas:</div>
+        <div class="section-content">
+            <ul>
+                {% for area in summary.most_focused_areas %}
+                    <li class="list-item">{{ area }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <!-- Recent Publications -->
+        <div class="section-header">Recent Publications:</div>
+        <div class="section-content">
+            <ul>
+                {% for pub in summary.recent_publications %}
+                    <li class="list-item">{{ pub.title }} ({{ pub.year }})</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</body>
+</html>

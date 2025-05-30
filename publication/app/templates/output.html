@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Research Track</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background: url('https://images.rawpixel.com/image_800/czNmcy1wcml2YXRlL3Jhd3BpeGVsX2ltYWdlcy93ZWJzaXRlX2NvbnRlbnQvbHIvcm0zNzgtMDkta255OWZoM2IuanBn.jpg') no-repeat center center fixed;
+            background-size: cover;
+        }
+        header {
+            width: 100%;
+            position: absolute;
+            top: 10px;
+            left: 20px;
+            text-align: left;
+            font-size: 36px;
+            font-weight: bold;
+            color: white; /* Changed to white for better visibility */
+        }
+        .container {
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            max-width: 500px;
+            width: 100%;
+            text-align: center;
+        }
+        .message {
+            margin-bottom: 20px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        .download-group {
+            margin-bottom: 15px;
+        }
+        a {
+            display: inline-block;
+            margin: 10px;
+            padding: 10px 15px;
+            background-color: #007BFF;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        a:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <header>Research Track</header>
+    <div class="container">
+        <div class="message">The details have been successfully fetched!</div>
+        <div class="download-group">
+            <a href="{{ docx_url }}" download>Download Word</a>
+        </div>
+        <div class="download-group">
+            <a href="{{ xlsx_url }}" download>Download Excel</a>
+        </div>
+    </div>
+</body>
+</html>

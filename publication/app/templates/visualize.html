@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visualize Publications - Research Track</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        /* General Styling */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            padding-top: 30px; /* Space from the top */
+            background-color: #717b87;
+            height: auto;
+        }
+
+        header {
+            font-size: 36px;
+            font-weight: bold;
+            color: white;
+            margin-bottom: 30px;
+        }
+
+        .container {
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            width: 100%;
+            text-align: center;
+            margin-top: 50px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+            text-align: left;
+        }
+
+        label {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        select, input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        #search_suggestions {
+            max-height: 100px;
+            overflow-y: auto;
+            border: 1px solid #ccc;
+            display: none;
+            background: white;
+        }
+
+        .suggestion-item {
+            padding: 8px;
+            cursor: pointer;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .suggestion-item:hover {
+            background-color: #f1f1f1;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        /* Modal Styling */
+        #resultModal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.4);
+            padding-top: 60px;
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto;
+            padding: 30px;
+            border: 1px solid #888;
+            width: 80%;
+            border-radius: 10px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .close {
+            color: #aaa;
+            font-size: 28px;
+            font-weight: bold;
+            position: absolute;
+            top: 10px;
+            right: 10px;
+        }
+
+        .close:hover {
+            color: black;
+            cursor: pointer;
+        }
+
+        /* Summary Styling */
+        .summary-title {
+            font-size: 24px;
+            color: #007BFF;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .summary-item {
+            margin: 10px 0;
+            font-size: 18px;
+        }
+
+        .summary-item-icons {
+            color: #007BFF;
+            margin-right: 10px;
+        }
+
+        /* Image Styling */
+        img {
+            max-width: 100%;
+            height: auto;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <header>Visualize Publications</header>
+    <div class="container">
+        <form id="visualizationForm">
+            <div class="form-group">
+                <label for="search_type">Search By:</label>
+                <select id="search_type" name="search_type">
+                    <option value="name">Faculty Name</option>
+                    <option value="orcid">ORCID</option>
+                    <option value="scholar_id">Google Scholar ID</option>
+                    <option value="scopus_id">Scopus ID</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="search_query">Enter Search Value:</label>
+                <input type="text" id="search_query" name="search_query" placeholder="Type to search...">
+                <div id="search_suggestions"></div>
+            </div>
+            <button type="submit">Generate Visualizations</button>
+        </form>
+    </div>
+
+   <!-- Modal Popup for Summary and Visualizations -->
+   <div id="resultModal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2 class="summary-title">📊 Summary Report for: <span id="faculty_name_report"></span></h2>
+
+        <!-- Summary Data -->
+<div class="summary-item">
+<i class="summary-item-icons fas fa-book"></i><strong>Total Publications:</strong> <span id="total_publications"></span>
+</div>
+<div class="summary-item">
+<i class="summary-item-icons fas fa-book"></i><strong>Total Journals:</strong> <span id="total_journals"></span>
+</div>
+<div class="summary-item">
+<i class="summary-item-icons fas fa-chalkboard-teacher"></i><strong>Total Conferences:</strong> <span id="total_conferences"></span>
+</div>
+<div class="summary-item">
+<i class="summary-item-icons fas fa-cogs"></i><strong>Total Citation Count:</strong> <span id="total_citation_count"></span>
+</div>
+<div class="summary-item">
+<i class="summary-item-icons fas fa-calendar-check"></i><strong>Most Active Year:</strong> <span id="most_active_year"></span>
+</div>
+<div class="summary-item">
+<i class="summary-item-icons fas fa-star"></i><strong>Most Cited Paper:</strong> <span id="highest_cited_paper"></span> (📌 <span id="highest_citation_count"></span> citations)
+</div>
+<div class="summary-item">
+<i class="summary-item-icons fas fa-chart-line"></i><strong>Average Citations per Publication:</strong> <span id="avg_citations"></span>
+</div>
+
+       
+
+        <!-- Research Areas -->
+       
+
+        <!-- Recent Publications -->
+        <div class="report-section">
+            <h2 class="section-heading">📚 Recent Publications</h2>
+            <ul id="recent_publications" class="summary-list"></ul>
+        </div>
+
+        <!-- Top Cited Publications -->
+        <div class="report-section">
+            <h2 class="section-heading">🏆 Top Cited Publications</h2>
+            <ul id="top_cited" class="summary-list"></ul>
+        </div>
+
+        <!-- Publication Trend -->
+        <div class="report-section">
+            <h2 class="section-heading">📈 Publication Trend</h2>
+            <ul id="publication_trend" class="summary-list"></ul>
+        </div>
+
+        <!-- Visualizations -->
+        <div class="image-container">
+            <h2 class="section-heading">📊 Publication Trend Chart</h2>
+            <img id="publication_trend_img" src="" alt="Publication Trend">
+        </div>
+
+        <div class="image-container">
+            <h2 class="section-heading">📌 Publication Type Distribution</h2>
+            <img id="publication_type_dist_img" src="" alt="Publication Type Distribution">
+        </div>
+
+        
+    </div>
+</div>
+    <script>
+        document.getElementById("search_query").addEventListener("input", async function() {
+            const searchType = document.getElementById("search_type").value;
+            const query = this.value;
+            if (query.length < 2) return;
+
+            const response = await fetch(`http://127.0.0.1:5000/search_faculty?search_type=${searchType}&query=${query}`);
+
+
+if (!response.ok) {
+    console.error("Server Error:", response.status);
+    alert("Error fetching faculty data. Please check the server.");
+    return;
+}
+
+const results = await response.json();
+
+            let suggestionsDiv = document.getElementById("search_suggestions");
+            suggestionsDiv.innerHTML = "";
+            suggestionsDiv.style.display = "block";
+
+            results.forEach(item => {
+                let div = document.createElement("div");
+                div.classList.add("suggestion-item");
+                div.innerHTML = item.faculty_name || item.orcid_id || item.scholar_id || item.scopus_id;
+                div.onclick = function() {
+                    document.getElementById("search_query").value = div.innerHTML;
+                    suggestionsDiv.style.display = "none";
+                };
+                suggestionsDiv.appendChild(div);
+            });
+        });
+
+       // Handle form submission
+       // When the form is submitted, fetch the visualization data
+       document.addEventListener("DOMContentLoaded", function () {
+    document.getElementById("visualizationForm").addEventListener("submit", async function (event) {
+        event.preventDefault();
+        
+        const searchType = document.getElementById("search_type").value;
+        const searchQuery = document.getElementById("search_query").value;
+        
+        if (!searchQuery) {
+            alert("Please enter a search query.");
+            return;
+        }
+        
+        try {
+            const response = await fetch(`/fetch_visualization_data`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ search_type: searchType, search_query: searchQuery })
+            });
+
+            if (!response.ok) {
+                console.error("Error:", response.status);
+                alert("Failed to fetch visualization data.");
+                return;
+            }
+
+            const data = await response.json();
+            document.getElementById("faculty_name_report").textContent = searchQuery;
+            
+            document.getElementById("total_publications").textContent = data.summary.total_publications || "0";
+            document.getElementById("total_journals").textContent = data.summary.total_journals || "0";
+            document.getElementById("total_conferences").textContent = data.summary.total_conferences || "0";
+            document.getElementById("total_citation_count").textContent = data.summary.total_citation_count || "0";
+            document.getElementById("most_active_year").textContent = data.summary.most_active_year || "N/A";
+
+            document.getElementById("highest_cited_paper").textContent = data.summary.highest_cited_paper?.title || "N/A";
+            document.getElementById("highest_citation_count").textContent = data.summary.highest_cited_paper?.citation_count || "0";
+            document.getElementById("avg_citations").textContent = data.summary.avg_citations || "0";
+            // Populate lists
+            const populateList = (elementId, items) => {
+    const list = document.getElementById(elementId);
+    list.innerHTML = "";  // Clear existing content
+    items.forEach(item => {
+        const li = document.createElement("li");
+        li.textContent = typeof item === "object" ? `${item.title} (${item.year})` : item;  // ✅ Use backticks (` `)
+        list.appendChild(li);
+    });
+};
+
+
+           
+            populateList("recent_publications", data.summary.recent_publications);
+            populateList("top_cited", data.summary.top_cited);
+            populateList("publication_trend", Object.entries(data.summary.publication_trend)
+    .map(([year, count]) => `${year}: ${count} publications`));
+
+
+
+            // ✅ Debug: Check if images exist before setting src
+            if (data.publication_trend) {
+                document.getElementById("publication_trend_img").src = "data:image/png;base64," + data.publication_trend;
+            } else {
+                console.error("Publication trend image missing");
+            }
+
+            if (data.publication_type_dist) {
+                document.getElementById("publication_type_dist_img").src = "data:image/png;base64," + data.publication_type_dist;
+            } else {
+                console.error("Publication type distribution image missing");
+            }
+
+            document.getElementById("resultModal").style.display = "block";
+        } catch (error) {
+            console.error("Error:", error);
+            alert("An error occurred while fetching the data.");
+        }
+    });
+
+    document.querySelector(".close").addEventListener("click", () => {
+        document.getElementById("resultModal").style.display = "none";
+    });
+});
+
+    </script>
+</body>
+</html>
